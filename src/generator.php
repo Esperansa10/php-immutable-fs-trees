@@ -14,44 +14,38 @@ $tree = mkdir('/', [
     mkdir('eTc', [
         mkdir('NgiNx'),
         mkdir('CONSUL', [
-            mkfile('Сonfig.JSON'),
+            mkfile('Config.JSON'),
         ]),
     ]),
     mkfile('hOsts'),
 ]);
 
 function dfs($tree) {
-  echo strtolower(getName($tree)) . "\n";
+ return strtolower(getName($tree)); // выводит имена
    if (isFile($tree)) {
       return;
   }
   $children = getChildren($tree);
    array_map(fn($child) => dfs($child), $children);
 }
-var_dump(dfs($tree));
-
-
 
 
 function downcaseFileNames($tree) {
-    $children = getChildren($tree); 
-    
-    $newChildren = array_map(function($child) {
-    $name = strtolower(getName($child));
+    $children = getChildren($tree); // получаем детей дерева
+    $newchildren = array_map(function($child) {  
+    $name = dfs($child);
+  
     if (isDirectory($child)) {
-    
-        array_map(fn($child) => dfs($child), $children);
-    
-        return mkdir($name, getChildren($child), getMeta($child));
+              
+    return mkdir($name, getChildren($child), getMeta($child));
     }
     return mkfile($name, getMeta($child));
     },
         $children);
-        
-            return mkdir(getName($tree), $newChildren, getMeta($tree));
-
+    return mkdir(getName($tree), $newchildren, getMeta($tree)); // собираем финальное дерево
 }
-// var_dump(downcaseFileNames($tree));
+
+var_dump(downcaseFileNames($tree));
 
 
 
