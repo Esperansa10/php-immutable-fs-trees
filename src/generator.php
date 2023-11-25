@@ -8,72 +8,29 @@ use function Php\Immutable\Fs\Trees\trees\getChildren;
 use function Php\Immutable\Fs\Trees\trees\getName;
 use function Php\Immutable\Fs\Trees\trees\getMeta;
 use function Php\Immutable\Fs\Trees\trees\isFile;
-use function Php\Immutable\Fs\Trees\trees\isDirectory;
+
 
 $tree = mkdir('/', [
     mkdir('eTc', [
         mkdir('NgiNx'),
         mkdir('CONSUL', [
-            mkfile('Config.JSON'),
+            mkfile('Configs.JSON'),
         ]),
     ]),
     mkfile('hOsts'),
 ]);
 
-function dfs($tree) {
- return strtolower(getName($tree)); // выводит имена
-   if (isFile($tree)) {
-      return;
-  }
-  $children = getChildren($tree);
-   array_map(fn($child) => dfs($child), $children);
-}
-
-
 function downcaseFileNames($tree) {
-    $children = getChildren($tree); // получаем детей дерева
-    $newchildren = array_map(function($child) {  
-    $name = dfs($child);
-  
-    if (isDirectory($child)) {
-              
-    return mkdir($name, getChildren($child), getMeta($child));
-    }
-    return mkfile($name, getMeta($child));
-    },
-        $children);
-    return mkdir(getName($tree), $newchildren, getMeta($tree)); // собираем финальное дерево
+    $children = getChildren($tree);  //получаем детей дерева
+        if (isFile($children)) { // если ребенок дерева файл, пересобираем файл: 
+            $newname = strtolower(getName($children) );  //приводим имя в нижний регистр
+            $children = mkfile($newname, getMeta($children));  //собираем нового ребенка с измененным именем 
+        }
+    // если ребенок не файл
+    else { // перезапускаем перебор:
+    $children = mkdir(getName($children), getChildren($children), getMeta($children)); // собираем директорию
+    $children = array_map(fn($child) => downcaseFileNames($child), $children); // и запускаем перебор   
 }
-
+    }
 var_dump(downcaseFileNames($tree));
 
-
-
-// downcaseFileNames($tree);
-
-// ---
-// $tree = mkdir(
-//     'my documents', [
-//         mkfile('avatar.jpg', ['size' => 100]),
-//         mkfile('passport.jpg', ['size' => 200]),
-//         mkfile('family.jpg',  ['size' => 150]),
-//         mkfile('addresses',  ['size' => 125]),
-//         mkdir('presentations')
-//         ],
-//     );
-
-// $newTree = compressImages($tree);
-
-// function compressImages($tree) {
-//     $children = getChildren($tree); //получаем файлы 
-
-//     $children = array_map(function($child) {
-//         if (isFile($child) and strpos($child['name'], '.jpg')) {
-//         $child['meta']['size'] = $child['meta']['size']/2; }
-//         return $child; }, 
-//         $children);
-
-//     return mkdir(getName($tree), $children, getMeta($tree));
-//     }
-
-// print_r($newTree); 
