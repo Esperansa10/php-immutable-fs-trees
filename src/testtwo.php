@@ -21,5 +21,5 @@ function compressImages($tree) {
 
     return mkdir(getName($tree), $children, getMeta($tree));
     }
-
+    compressImages($tree);
 

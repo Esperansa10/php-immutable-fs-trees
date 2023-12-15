@@ -19,23 +19,15 @@ $tree = [
 ];
 
 
-function recurs($node) //забрала дерево
+function recurs($node)  
 {
    
     if (is_array($node)) {
-        $result = array_map(fn ($item) => recurs($item), $node); //каждый элемент дерева пропустила через себя 
-        // но т.е. элмент не массив, сработала не эта строчка, а та что ниже
+        $result = array_map(fn ($item) => recurs($item), $node);  
         return $result;
     }
-    $node++; // вот тут она добавила +1 к элементу
-    return $node; // вот тут она вернула его 
+    $node++; 
+    return $node;  
 }
 var_dump(recurs($tree));
-
-// $arr = [1,2,3,4];
-// $result = array_map('sayhi', $arr); 
-// function sayhi($any) {
-//     return  $any . ' say hi' ; 
-// }
-// // var_dump($result); 
 

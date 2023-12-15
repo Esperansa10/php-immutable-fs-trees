@@ -20,17 +20,19 @@ $tree = mkdir('/', [
     mkfile('hOsts'),
 ]);
 
-function downcaseFileNames($tree) {
-    $children = getChildren($tree);  //получаем детей дерева
-        if (isFile($children)) { // если ребенок дерева файл, пересобираем файл: 
-            $newname = strtolower(getName($children) );  //приводим имя в нижний регистр
-            $children = mkfile($newname, getMeta($children));  //собираем нового ребенка с измененным именем 
-        }
-    // если ребенок не файл
-    else { // перезапускаем перебор:
-    $children = mkdir(getName($children), getChildren($children), getMeta($children)); // собираем директорию
-    $children = array_map(fn($child) => downcaseFileNames($child), $children); // и запускаем перебор   
+function downcaseFileNames($tree)
+{
+    $meta = getMeta($tree); 
+
+    if (isFile($tree)) {
+        $newname = strtolower(getName($tree));
+        return mkfile($newname, $meta);
+    } 
+    else { 
+    $newtree = array_map(fn($child) => downcaseFileNames($child), getChildren($tree));
+    $tree = mkdir(getName($tree), $newtree, $meta);
+        return $tree;
 }
-    }
+}
 var_dump(downcaseFileNames($tree));
 
