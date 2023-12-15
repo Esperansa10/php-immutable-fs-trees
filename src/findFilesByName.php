@@ -119,7 +119,7 @@ function iter($node, $depth = INF)
 
 function findEmptyPaths($tree)
 {
-    return iter($tree);
+    return iter($tree, 0);
 }
 
 var_dump(findEmptyPaths($tree)); 
